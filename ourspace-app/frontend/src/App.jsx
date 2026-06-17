@@ -4,7 +4,7 @@ import Auth from './components/Auth';
 import MainChat from './components/MainChat';
 
 // Коннектимся к нашему Node.js бэкенду
-const socket = io.connect('https://nzugf-31-40-123-26.run.pinggy-free.link');
+const socket = io.connect('https://ourspace-app2-production-08f7.up.railway.app/');
 
 export default function App() {
   const [user, setUser] = useState(null);
