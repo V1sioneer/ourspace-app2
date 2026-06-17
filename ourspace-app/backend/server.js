@@ -56,7 +56,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// Запускаем на порту 3001
-server.listen(3001, () => {
-  console.log('БЭКЕНД СЕРВЕР ЗАПУЩЕН НА ПОРТУ 3001!');
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, () => {
+  console.log('БЭКЭНД СЕРВЕРА ЗАПУЩЕН НА ПОРТУ ${PORT!', PORT);
 });
