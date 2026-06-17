@@ -4,7 +4,8 @@ import { FiSend, FiMessageSquare, FiUsers, FiPhone, FiMenu } from 'react-icons/f
 
 export default function MainChat({ currentUser, socket }) {
   const [activeTab, setActiveTab] = useState('chats');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  // На мобилках изначально скрываем шторку, на ПК — показываем
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messageText, setMessageText] = useState('');
   const [messages, setMessages] = useState([]);
@@ -53,13 +54,21 @@ export default function MainChat({ currentUser, socket }) {
   };
 
   return (
-    <div className="flex h-screen bg-[#0f111a] text-[#e2e8f0] font-sans overflow-hidden">
+    <div className="flex h-screen bg-[#0f111a] text-[#e2e8f0] font-sans overflow-hidden relative">
       
+      {/* Затемнение заднего фона для мобилок, когда шторка открыта */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-20 md:hidden transition-opacity"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* БОКОВАЯ ПАНЕЛЬ */}
       <motion.div 
         animate={{ width: isSidebarOpen ? '320px' : '0px', opacity: isSidebarOpen ? 1 : 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="bg-[#151824] border-r border-[#222738] flex flex-col h-full overflow-hidden z-10 md:relative absolute inset-y-0 left-0"
+        className="bg-[#151824] border-r border-[#222738] flex flex-col h-full overflow-hidden z-30 md:relative absolute inset-y-0 left-0"
       >
         <div className="p-4 flex items-center justify-between border-b border-[#222738]">
           <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
@@ -94,7 +103,13 @@ export default function MainChat({ currentUser, socket }) {
               <motion.div
                 key={index}
                 whileHover={{ x: 6, backgroundColor: '#1e2335' }}
-                onClick={() => setSelectedChat(username)}
+                onClick={() => {
+                  setSelectedChat(username);
+                  // Закрываем шторку на мобилках после выбора чата
+                  if (window.innerWidth < 768) {
+                    setIsSidebarOpen(false);
+                  }
+                }}
                 className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors ${selectedChat === username ? 'bg-[#222738]' : ''}`}
               >
                 <div className="relative">
@@ -114,7 +129,7 @@ export default function MainChat({ currentUser, socket }) {
       </motion.div>
 
       {/* ОСНОВНОЕ ОКНО ЧАТА */}
-      <div className="flex-1 flex flex-col h-full relative bg-[#0b0c14]">
+      <div className="flex-1 flex flex-col h-full relative bg-[#0b0c14] z-0">
         
         {/* Хедер чата */}
         <div className="h-16 border-b border-[#222738] bg-[#151824] flex items-center justify-between px-4 z-0">
